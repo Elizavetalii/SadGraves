@@ -1,3 +1,5 @@
+import org.example.Log;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,24 +13,28 @@ public class Graveyard {
         this.сolumns = columns;
         this.graves = new ArrayList<>();
     }
-
-    public int countGraves() {
-        return graves.size();
-    }
-
-    public void displayGraves() {
-        for (Grave grave : graves) {
-            System.out.println("Номер вертикального ряда: " + grave.getRow()
-                    + "\nНомер горизонтального ряда: " + grave.getColumn());
+    static Log myLogGraveyard;
+    static {
+        try {
+            myLogGraveyard = new Log("myLogGraveyard.log", "LogGraveyard");
+        }catch(IOException e){
+            throw new RuntimeException(e);
         }
     }
-
-    public boolean NullGrave(){
-        return graves.isEmpty();
-    }
-
-    public void addGrave(Grave grave) {
-        graves.add(grave);
+    public void displayMourners() {
+        boolean hasMourners = false;
+        for (Grave grave : graves) {
+            if (grave != null) {
+                Mourners mourners = grave.getMourners();
+                if (mourners != null) {
+                    System.out.println(mourners.getFullName());
+                    hasMourners = true;
+                }
+            }
+        }
+        if (!hasMourners) {
+            myLogGraveyard.logger.info("Умерших пока нет!");
+        }
     }
 
     public void deleteGrave(int row, int column) {
@@ -37,7 +43,7 @@ public class Graveyard {
             graves.remove(grave);
             System.out.println("Могила успешно удалена");
         } else {
-            System.out.println("Могила не найдена");
+            myLogGraveyard.logger.info("Могила не найдена");
         }
     }
 
@@ -59,20 +65,24 @@ public class Graveyard {
         return null;
     }
 
-    public void displayMourners() {
-        boolean hasMourners = false;
+
+    public int countGraves() {
+        return graves.size();
+    }
+
+    public void displayGraves() {
         for (Grave grave : graves) {
-            if (grave != null) {
-                Mourners mourners = grave.getMourners();
-                if (mourners != null) {
-                    System.out.println(mourners.getFullName());
-                    hasMourners = true;
-                }
-            }
+            System.out.println("Номер вертикального ряда: " + grave.getRow()
+                    + "\nНомер горизонтального ряда: " + grave.getColumn());
         }
-        if (!hasMourners) {
-            System.out.println("Умерших пока нет!");
-        }
+    }
+
+    public boolean NullGrave(){
+        return graves.isEmpty();
+    }
+
+    public void addGrave(Grave grave) {
+        graves.add(grave);
     }
 }
 
